@@ -45,22 +45,23 @@ arbitrarily choose 1.
 beta1<-1
 ```
 
-We then rearrange the model such that $\beta_0$ and $\beta_2$ are held constant:
+
+
+
+ 
+Keeping $\hat{\beta_1}$ fixed, fit the model:
 
 $$Y-\hat{\beta_1} X_1 = \beta_0 + \beta_2 X_2 + \epsilon$$
- 
-Keeping $\beta_1$ fixed, fit the model:
 
 ```{r beta2}
 a<-y-beta1*x1
 beta2<-lm(a~x2)$coef[2]
 ```
 
-Using the same idea as above, we then rearrange the model such that $\beta_0$ and $\beta_1$ are held constant:
+
+Keeping $\hat{\beta_2}$ fixed, fit the model:
 
 $$Y-\hat{\beta_2} X_2 = \beta_0 + \beta_1 X_1 + \epsilon$$
-
-Keeping $\beta_2$ fixed, fit the model:
 
 ```{r beta1}
 a<-y-beta2*x2
@@ -68,7 +69,7 @@ beta1<-lm(a~x1)$coef[2]
 ```
 
 Write a for loop to repeat the process 100 times. Report the
-estimates of $\beta_0$, $\beta_1$, and $\beta_2$ at each iteration of the for loop.
+estimates of $\hat{\beta_0}$, $\hat{\beta_1}$, and $\hat{\beta_2}$ at each iteration of the for loop.
 We can view the print out below:
 
 ```{r loop}
