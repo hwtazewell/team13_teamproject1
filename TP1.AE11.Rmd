@@ -1,0 +1,111 @@
+---
+title: "Applied Exercise 11"
+author: "Team 13 - Xander Giarracco, Xuanxiong Zhen, Hanzheng Li, Henry Tazewell"
+date: "2/16/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ISLR)
+attach(Hitters)
+```
+
+# Applied Exercise 11
+
+GAMs are generally fit using a backfitting approach. This exercise explores the
+idea behind backfitting by approximating multiple linear regression using 
+simple linear regression in an iterative process.
+
+Suppose that we would like to perform multiple linear regression, but
+we do not have software to do so. Instead, we only have software
+to perform simple linear regression. Therefore, we take the following
+iterative approach: we repeatedly hold all but one coefficient estimate
+fixed at its current value, and update only that coefficient
+estimate using a simple linear regression. The process is continued until
+convergence—that is, until the coefficient estimates stop changing.
+
+
+Generate a response Y and two predictors X1 and X2
+
+```{r data}
+y<-Hitters$Runs
+x1<-Hitters$Hits
+x2<-Hitters$AtBat
+```
+
+Here is the model we are trying to fit:
+
+$$Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \epsilon$$
+
+
+Initialize $\beta_1$ to take on a value of your choice, in this example we will
+arbitrarily choose 1.
+```{r beta}
+beta1<-1
+```
+
+We then rearrange the model such that $\beta_0$ and $\beta_2$ are held constant:
+
+$$Y-\hat{\beta_1} X_1 = \beta_0 + \beta_2 X_2 + \epsilon$$
+ 
+Keeping $\beta_1$ fixed, fit the model:
+
+```{r beta2}
+a<-y-beta1*x1
+beta2<-lm(a~x2)$coef[2]
+```
+
+Using the same idea as above, we then rearrange the model such that $\beta_0$ and $\beta_1$ are held constant:
+
+$$Y-\hat{\beta_2} X_2 = \beta_0 + \beta_1 X_1 + \epsilon$$
+
+Keeping $\beta_2$ fixed, fit the model:
+
+```{r beta1}
+a<-y-beta2*x2
+beta1<-lm(a~x1)$coef[2]
+```
+
+Write a for loop to repeat the process 100 times. Report the
+estimates of $\beta_0$, $\beta_1$, and $\beta_2$ at each iteration of the for loop.
+We can view the print out below:
+
+```{r loop}
+betas<-data.frame(beta0=numeric(),beta1=numeric(),beta2=numeric())
+x<-1:100
+for(i in x) {
+  a<-y-beta1*x1
+  beta2<-lm(a~x2)$coef[2]
+  
+  a<-y-beta2*x2
+  beta1<-lm(a~x1)$coef[2]
+  
+  beta0<-lm(a~x1)$coef[1]
+  
+  betas<-rbind(betas, data.frame(beta0=beta0,beta1=beta1,beta2=beta2))
+  print(betas[i,])
+}
+```
+
+Plot the each $\beta$ in a different color. Then create the proper multiple linear
+regression model using lm() and use abline() to plot the values of each 
+new $\beta$ in the same view.
+
+```{r plots}
+plot(x,betas$beta0,type="l",col="red",lty=2,xlab='iteration',ylab='betas')
+lines(x,betas$beta1,type="l",col="green",lty=2)
+lines(x,betas$beta2,type="l",col="blue",lty=2)
+
+mod<-lm(y~x1+x2)
+summary(mod)
+
+abline(mod$coef[1],0, col='pink',lty=3)
+abline(mod$coef[2],0,col='lightgreen',lty=3)
+abline(mod$coef[3],0,col='lightblue',lty=3)
+
+```
+
+
+On this data set, it took roughly 70 backfitting iterations to obtain a near perfect
+approximation for all three of the multiple regression coefficient estimates.
