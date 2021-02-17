@@ -3,8 +3,9 @@ title: "7.8.2 Splines"
 author: "By Hanzheng Li, Henry Tazewell, Xander Giarracco and Xuanxiong Zhen"
 date: "2/16/2021"
 output:
-    pdf_document: default
-    html_document: default
+  pdf_document: default
+  word_document: default
+  html_document: default
 ---
 Importing the necessary libraries 7.8.2
 ```{r}
@@ -19,7 +20,7 @@ library(splines)
 agelims=range(age)
 age.grid=seq(from=agelims[1], to=agelims[2])
 ```
-|  To fit the regression splines in R, we use library(splines). Section 7.4 exhibited that regression splines can be fitted through an appropriate matrix of basis functions. The bs() function generates the entire matrix of basis functions for splines using the specified set of knots. The default for bs() is to produce cubic splines. Below, wage has been fitted to age using a regression spline. 
+|  To fit the regression splines in R, we use library(splines). In section 7.4, regression splines were fitted through an appropriate matrix of basis functions. The bs() function generates the entire matrix of basis functions for splines using the specified set of knots. The default for bs() is to produce cubic splines. Below, the wage has been fitted to age using a regression spline. 
 
 ```{r}
 #First Block
@@ -42,11 +43,12 @@ lines(age.grid, pred2$fit,col="red",lwd=2)
 
 ```
 
-|  In the code above, we have placed knots at the ages 25, 40 and 60. This stands to reason because these are pivotal income years in a person's life. At from 25 to 40 years of age an individual will likely be experiencing more rapid career growth, from 40 to 60 years old there will be career stagnation and after age 60 people will begin to retire. Ultimately, these three knots create a spline with six basis functions. It is important to note that a cubic spline with three knots has seven degrees of freedom; these degrees of freedom are used up by an intercept, plus six basis functions. 
+|  In the code above, we have placed knots at the ages 25, 40, and 60. These knots' placement stands to reason because these are pivotal income years in a person's life. From 25 to 40 years of age, an individual will likely be experiencing more rapid career growth; from 40 to 60 years old, there will be career stagnation, and after age 60, people will begin to retire. Ultimately, these three knots create a spline with six basis functions. It is important to note that a cubic spline with three knots has seven degrees of freedom; these degrees of freedom are broken within an intercept, plus six basis functions. 
 
-|   Referring to the second block of code, we can use df = 6 option to to produce a spline with knots at uniform quantiles of the data. R choose the position for the knots at ages 33.75 42.0 and 51.0.The function bs() also has a degree argument, so instead of using the default degree of 3 (cubic), we can fit a spline of any degree. 
+|   Referring to the second block of code, we can use df = 6 to produce a spline with knots at uniform quantiles of the data. R choose the position for the knots at ages 33.75 42.0 and 51.0. The function bs() also has a degree argument, so instead of using the default degree of 3 (cubic), we can fit a spline of any degree. 
 
-|   For the third block of code, we use the ns() function to fit a natural spline -- in this particular case we use 4 degrees of freedom. Like the bs() function, we could instead specify the knots directly using the knots option. 
+|   For the third block of code, we use the ns() function to fit a natural spline -- in this particular case, we use 4 degrees of freedom. Like the bs() function, we could instead specify the knots directly using the knots option. 
+
 
 |   To fit the smoothing spline we use the smooth.spline() function and produce Figure 7.8 with the following code:
 ```{r} 
@@ -60,7 +62,7 @@ lines(fit2,col="blue",lwd=2)
 legend("topright",legend=c("16 DF","6.8 DF"),col=c("red","blue"),lty=1,lwd=2,cex=.8)
 ```
 
-|   In our first call to smooth.spline(), we specified that df=16. With this input information, the function then determines which value of lambda leads to 16 degrees of freedom. The second call to smooth.spline(), we select the smoothness level through crossvalidation (shown as cv = TRUE); the result of this is a  lambda that yields 6.8 degrees of freedom. In order to perform local regression, we use the loess() function. Because both models are similar in fit, we would select the smoothing spline model with the lower degrees of freedom (6.8). In other words, we chose the simpler model. 
+|   In our first call to smooth.spline(), we specified that df=16. With this input information, the function then determines which lambda value leads to 16 degrees of freedom. Notice that the model with 16 degrees of freedom has a lot of wiggling. The second call to smooth.spline(), we select the smoothness level through cross-validation (shown as cv = TRUE); the result of this is a  lambda that yields 6.8 degrees of freedom. To perform local regression, we use the loess() function. Because both models are similar in fit, we would select the smoothing spline model with the lower degrees of freedom (6.8). In other words, we chose the simpler model. 
 
 |   Lastly we performed the local linear regression spanning 20% to 50% of the observations. A takeaway from this is that the larger the span the smoother the fit will be. The locfit library can be used for fitting local regression models in R
 ```{r}
